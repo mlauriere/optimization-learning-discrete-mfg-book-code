@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "kind": "traffic-timing",
+  "timing_scope": "Solver iteration loops only; construction, warm-up and metrics excluded",
+  "traffic_mode": "fixed_horizon_v1",
+  "timing_iterations": 20,
+  "populations": [
+    2,
+    5,
+    10,
+    15,
+    20,
+    25,
+    30,
+    40,
+    45,
+    50
+  ],
+  "repetitions": 3,
+  "timing_error_bars": "sample standard deviations"
+}

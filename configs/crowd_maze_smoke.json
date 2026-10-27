@@ -1,0 +1,43 @@
+{
+  "layout": "asymmetric_maze",
+  "grid": [
+    "#######",
+    "#o    #",
+    "# ### #",
+    "# #   #",
+    "#   # #",
+    "#     #",
+    "#######"
+  ],
+  "targets": [
+    [
+      5,
+      5
+    ]
+  ],
+  "target_weights": [
+    10
+  ],
+  "seed": 7,
+  "iterations": 10,
+  "horizon": 11,
+  "noise_levels": [
+    0.0,
+    0.5
+  ],
+  "congestion_coefficients": [
+    1.0
+  ],
+  "methods": [
+    "fp",
+    "omd_0p1",
+    "omd_0p01",
+    "fixed_point",
+    "damped_fp",
+    "softmax_fixed_point",
+    "softmax_fp",
+    "bpi"
+  ],
+  "reward_mode": "markov_action_cost_v1",
+  "value_backend": "normalized"
+}

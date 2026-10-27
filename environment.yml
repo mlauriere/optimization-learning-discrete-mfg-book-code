@@ -1,0 +1,15 @@
+name: discrete-mfg-book
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.10.22
+  - pip
+  - pip:
+      - open-spiel==1.5
+      - numpy==1.26.4
+      - scipy==1.11.4
+      - matplotlib==3.7.1
+      - pandas==2.2.3
+      - seaborn==0.13.2
+      - pytest==9.1.1

@@ -1,0 +1,8 @@
+{
+  "mass_error": 0.0,
+  "initial_exploitability": 0.5,
+  "final_exploitability": 0.0,
+  "timing_records": 0,
+  "traffic_mode": "fixed_horizon_v1",
+  "policy_archive": "Frozen cumulative state scores; softmax coefficient 1, missing scores 0"
+}

@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "kind": "crowd",
+  "layout": {
+    "name": "asymmetric_maze",
+    "grid": [
+      "#######",
+      "#o    #",
+      "# ### #",
+      "# #   #",
+      "#   # #",
+      "#     #",
+      "#######"
+    ],
+    "targets": [
+      [
+        5,
+        5
+      ]
+    ],
+    "target_weights": [
+      10
+    ]
+  },
+  "parameters": {
+    "crowd_aversion_coef": 1.0,
+    "forbidden_states": "[0|0;0|1;0|2;0|3;0|4;0|5;0|6;1|0;1|6;2|0;2|2;2|3;2|6;3|0;3|2;3|6;4|0;4|2;4|4;4|6;5|0;5|6;6|0;6|1;6|2;6|3;6|4;6|5;6|6]",
+    "horizon": 11,
+    "initial_distribution": "[1|1]",
+    "initial_distribution_value": "[1.0]",
+    "noise_intensity": 0.5,
+    "only_distribution_reward": false,
+    "positional_reward": "[5|5]",
+    "positional_reward_value": "[10]",
+    "size": 7,
+    "with_congestion": false,
+    "reward_adapter": "markov_action_cost_v1",
+    "value_backend": "normalized"
+  },
+  "method_order": [
+    "fp",
+    "omd_0p1",
+    "omd_0p01",
+    "fixed_point",
+    "damped_fp",
+    "softmax_fixed_point",
+    "softmax_fp",
+    "bpi"
+  ],
+  "methods": {
+    "fp": {
+      "class": "fictitious_play",
+      "parameters": {},
+      "label": "Fictitious play",
+      "row_label": "Fictitious play",
+      "averaging_weight": "1/(k+1), update k>=1",
+      "implementation": "open_spiel.python.mfg.algorithms.fictitious_play.FictitiousPlay"
+    },
+    "omd_0p1": {
+      "class": "mirror_descent",
+      "parameters": {
+        "lr": 0.1
+      },
+      "label": "OMD ($\\eta=0.1$)",
+      "row_label": "OMD ($\\eta=0.1$)",
+      "implementation": "crowd_value_correction.NormalizedMirrorDescent"
+    },
+    "omd_0p01": {
+      "class": "mirror_descent",
+      "parameters": {
+        "lr": 0.01
+      },
+      "label": "OMD ($\\eta=0.01$)",
+      "row_label": "OMD ($\\eta=0.01$)",
+      "implementation": "crowd_value_correction.NormalizedMirrorDescent"
+    },
+    "fixed_point": {
+      "class": "fixed_point",
+      "parameters": {},
+      "label": "Fixed point",
+      "row_label": "Fixed point",
+      "implementation": "open_spiel.python.mfg.algorithms.fixed_point.FixedPoint"
+    },
+    "damped_fp": {
+      "class": "fictitious_play",
+      "parameters": {
+        "lr": 0.01
+      },
+      "label": "Damped fixed point ($\\alpha=0.01$)",
+      "row_label": "Damped fixed point",
+      "averaging_weight": 0.01,
+      "implementation": "open_spiel.python.mfg.algorithms.fictitious_play.FictitiousPlay"
+    },
+    "softmax_fixed_point": {
+      "class": "fixed_point",
+      "parameters": {
+        "temperature": 0.1
+      },
+      "label": "Softmax fixed point ($\\tau=0.1$)",
+      "row_label": "Softmax fixed point",
+      "implementation": "open_spiel.python.mfg.algorithms.fixed_point.FixedPoint"
+    },
+    "softmax_fp": {
+      "class": "fictitious_play",
+      "parameters": {
+        "temperature": 0.1
+      },
+      "label": "Softmax fictitious play ($\\tau=0.1$)",
+      "row_label": "Softmax fictitious play",
+      "averaging_weight": "1/(k+1), update k>=1",
+      "implementation": "open_spiel.python.mfg.algorithms.fictitious_play.FictitiousPlay"
+    },
+    "bpi": {
+      "class": "boltzmann_policy_iteration",
+      "parameters": {
+        "lr": 0.1
+      },
+      "label": "BPI ($\\beta=0.1$)",
+      "row_label": "BPI ($\\beta=0.1$)",
+      "implementation": "crowd_value_correction.NormalizedBoltzmannPolicyIteration"
+    }
+  },
+  "flow_axes": [
+    "time",
+    "y",
+    "x"
+  ],
+  "flow_interpretation": "Induced flow of the final returned policy",
+  "exploitability": "Raw unnormalized OpenSpiel NashConv",
+  "final_update": {
+    "fp": 50,
+    "omd_0p1": 50,
+    "omd_0p01": 50,
+    "fixed_point": 50,
+    "damped_fp": 50,
+    "softmax_fixed_point": 50,
+    "softmax_fp": 50,
+    "bpi": 50
+  },
+  "policy_table": {
+    "state_keys": "OpenSpiel policy keys: representative information-state histories for native states, observation strings for the wrapper; cost nodes occur only in the wrapper",
+    "columns": "Integer action IDs starting at zero; zero on illegal actions",
+    "kind": "Final returned policies, not resumable solver checkpoints"
+  }
+}

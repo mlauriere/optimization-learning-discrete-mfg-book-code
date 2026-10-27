@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "kind": "traffic",
+  "positions": {
+    "A": [
+      0,
+      0
+    ],
+    "B": [
+      1,
+      0
+    ],
+    "C": [
+      2,
+      1
+    ],
+    "D": [
+      2,
+      -1
+    ],
+    "E": [
+      3,
+      0
+    ],
+    "F": [
+      4,
+      0
+    ]
+  },
+  "links": [
+    "A->B",
+    "B->C",
+    "B->D",
+    "C->D",
+    "C->E",
+    "D->E",
+    "E->F"
+  ],
+  "time_step_length": 0.25,
+  "snapshot_update": 10,
+  "snapshot_population": 4,
+  "flow_axes": [
+    "time",
+    "link"
+  ],
+  "flow_unit": "probability",
+  "exploitability": "Raw unnormalized OpenSpiel NashConv",
+  "timing_iterations": 20,
+  "timing_scope": "Iteration loops only; construction and metrics excluded",
+  "traffic_mode": "fixed_horizon_v1"
+}

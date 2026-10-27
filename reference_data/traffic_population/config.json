@@ -1,0 +1,26 @@
+{
+  "seed": 7,
+  "traffic_mode": "fixed_horizon_v1",
+  "horizon": 17,
+  "time_step_length": 0.25,
+  "capacity": 4,
+  "snapshot_population": 4,
+  "snapshot_iterations": 10,
+  "omd_lr": 1.0,
+  "populations": [
+    2,
+    5,
+    10,
+    15,
+    20,
+    25,
+    30,
+    40,
+    45,
+    50
+  ],
+  "timing_iterations": 20,
+  "repetitions": 3,
+  "recursion_limit": 5000,
+  "snapshots_only": true
+}

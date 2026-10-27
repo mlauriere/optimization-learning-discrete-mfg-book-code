@@ -1,0 +1,48 @@
+{
+  "classification": "Corrected crowd/maze illustration; native physical dynamics retained",
+  "environment": {
+    "python": "3.10.22 | packaged by conda-forge | (main, Oct  6 2026, 22:55:54) [Clang 19.1.7 ]",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "logical_cpus": 18,
+    "thread_limits": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "packages": {
+      "open-spiel": "1.5",
+      "numpy": "1.26.4",
+      "scipy": "1.11.4",
+      "matplotlib": "3.7.1",
+      "pandas": "2.2.3",
+      "seaborn": "0.13.2"
+    },
+    "elapsed_seconds": 628.9373255840037,
+    "peak_rss_mb": 313.234375,
+    "status": "complete"
+  },
+  "numerical_run_source_sha256": {
+    "audit_crowd_results.py": "e1e9285a4ef24c461440656a3e565307692d2956d05d985f452c4bd2ed83e264",
+    "common.py": "52612174b04ddc2e1a571882cb98136c467a4adbc106a87bb269dc638c15d406",
+    "crowd.py": "0a18d364c41eef6645b6891c4e27be95b6b3769ecf228977acea9f1622c87e8c",
+    "crowd_coordinates.py": "baffeaedc9da72089867e476d21c07189e3b34b912e8c384ab97036e94ac4001",
+    "crowd_markov.py": "ace613bf9efe8626a00e61498822f612114e173eb6c2dc53df681997bb42b6e4",
+    "crowd_methods.py": "4d37b1f6fa88187797e7139f381172c64352e2136f29796c0993074751ab0fa4",
+    "crowd_results.py": "cc07c113ed00e69fc2a8f144f0f8a9aacd16c279c50bbb6b10f894781bbb4c45",
+    "crowd_value_correction.py": "dcf17231bf48bd0ca96327dd6ba2eeb40d1c23fdaf564c3f60a3c5a58860b0d7",
+    "plot_crowd.py": "a0891070590bf9170fb576264fe9cd420b5bf7a9bd3319e37c82893da67ab0db",
+    "plot_traffic.py": "2e60c0fdf59b66650879743dbc20f3da17c04597c674417787c18788fcacbb5c",
+    "plot_traffic_timing.py": "cd7a662d68658b3f18fb2926f01ae99db50fcf3fc742156393eb4f85032e9586",
+    "plotting.py": "dc6f656217121ee73c613e68c4058e9be08b7c5d8bb6091b493d4739507e3632",
+    "publication_figures.py": "e4bd3d7d87632a74b1b30d9f73e05a9b83e09c1ca4ed1211ee998dd2d4db9512",
+    "summarize_traffic_timing.py": "8c2891bb01d2732c06d84c69c575fd4b8f48d2cc90bec934b3c08b0fd9022adf",
+    "traffic.py": "216380fdba85634fd96d1d43f489028e2bdc1aa62ea34775935fd9efb72fbbb7",
+    "traffic_benchmark.py": "c26c052ba561dfbdd615af391028be4095587cad7a9a8e7c47db6d6661184773",
+    "verify_corrected_crowd.py": "b81ae4cc1fff06408b68c321564ef8daac8ee7177e0e15ccb8c01fae66c5e866",
+    "verify_reference_data.py": "59a180566815db04c655f5b04afc5b923ef0c35eb09f970c1967ad7ad7bbc404"
+  },
+  "source_hash_scope": "Numerical run before packaging; public defaults and filenames may differ"
+}

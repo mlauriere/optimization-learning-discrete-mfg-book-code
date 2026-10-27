@@ -1,0 +1,15 @@
+{
+  "crowd_aversion_coef": 1.0,
+  "forbidden_states": "[0|0;0|1;0|2;0|3;0|4;0|5;0|6;1|0;1|6;2|0;2|2;2|3;2|6;3|0;3|2;3|6;4|0;4|2;4|4;4|6;5|0;5|6;6|0;6|1;6|2;6|3;6|4;6|5;6|6]",
+  "horizon": 11,
+  "initial_distribution": "[1|1]",
+  "initial_distribution_value": "[1.0]",
+  "noise_intensity": 0.5,
+  "only_distribution_reward": false,
+  "positional_reward": "[5|5]",
+  "positional_reward_value": "[10]",
+  "size": 7,
+  "with_congestion": false,
+  "reward_adapter": "markov_action_cost_v1",
+  "value_backend": "normalized"
+}

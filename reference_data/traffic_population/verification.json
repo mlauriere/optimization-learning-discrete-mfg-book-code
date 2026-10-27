@@ -1,0 +1,10 @@
+{
+  "checks_passed": true,
+  "mass_error": 0.0,
+  "saved_policy_flow_error": 0.0,
+  "saved_policy_exploitability": 0.0,
+  "recorded_exploitability": 0.0,
+  "native_comparison_max_flow_difference": 0.0,
+  "native_comparison_max_curve_difference": 0.0,
+  "destination_mass_final_slice": 1.0
+}

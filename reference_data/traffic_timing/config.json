@@ -1,0 +1,56 @@
+{
+  "protocol": {
+    "schema_version": 1,
+    "traffic_mode": "fixed_horizon_v1",
+    "seed": 7,
+    "horizon": 17,
+    "time_step_length": 0.25,
+    "capacity": 4,
+    "omd_lr": 1.0,
+    "timing_iterations": 20,
+    "target_populations": [
+      2,
+      5,
+      10,
+      15,
+      20,
+      25,
+      30,
+      40,
+      45,
+      50
+    ],
+    "recursion_limit": 5000,
+    "warmup_updates_per_solver": 1,
+    "seed_rule": "base_seed + 1000 * population + repetition; zero-based repetition < 1000",
+    "order_rule": "CFR first iff (target_population_index + repetition) is odd",
+    "timing_scope": "Solver iteration loops only; construction, warm-up and metrics excluded",
+    "thread_limits": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "implementation_sha256": {
+      "common.py": "52612174b04ddc2e1a571882cb98136c467a4adbc106a87bb269dc638c15d406",
+      "traffic.py": "e85539e05ec20842de6abc39a2777004ad8fadfef3d6bfa71f974a96087cb731",
+      "traffic_benchmark.py": "b02ea81f17cb8e7d2b48fb1938ee2f5719d2f7aa5d5d8a60fb8616e1fb0b4806",
+      "traffic_aligned.py": "1d5d3bf4ca1e3cdcd2d3b5bca4cb51f80888820b2514e1779bbfdbd35ef2fbe4"
+    }
+  },
+  "populations": [
+    2,
+    5,
+    10,
+    15,
+    20,
+    25,
+    30,
+    40,
+    45,
+    50
+  ],
+  "repetitions": 3,
+  "timeout_seconds": 450.0
+}

@@ -1,0 +1,79 @@
+{
+  "seed": 7,
+  "iterations": 100,
+  "horizon": 21,
+  "layout": "concert_room",
+  "grid": [
+    "###############",
+    "# # ooooooo # #",
+    "# # ####### # #",
+    "# #  ooooo  # #",
+    "# # ####### # #",
+    "# #  o o o  # #",
+    "# # ### ### # #",
+    "# #  ooooo  # #",
+    "# # ### ### # #",
+    "#             #",
+    "# ###     ### #",
+    "# ########### #",
+    "# ########### #",
+    "#  #########  #",
+    "###############"
+  ],
+  "targets": [
+    [
+      1,
+      14
+    ],
+    [
+      13,
+      14
+    ]
+  ],
+  "target_weights": [
+    10,
+    10
+  ],
+  "method_parameters": {
+    "fp": {},
+    "omd_0p1": {
+      "lr": 0.1
+    },
+    "omd_0p01": {
+      "lr": 0.01
+    },
+    "fixed_point": {},
+    "damped_fp": {
+      "lr": 0.01
+    },
+    "softmax_fixed_point": {
+      "temperature": 0.1
+    },
+    "softmax_fp": {
+      "temperature": 0.1
+    },
+    "bpi": {
+      "lr": 0.1
+    }
+  },
+  "noise_levels": [
+    0.0,
+    0.5
+  ],
+  "congestion_coefficients": [
+    1.0,
+    10.0
+  ],
+  "methods": [
+    "fp",
+    "omd_0p1",
+    "omd_0p01",
+    "fixed_point",
+    "damped_fp",
+    "softmax_fixed_point",
+    "softmax_fp",
+    "bpi"
+  ],
+  "reward_mode": "markov_action_cost_v1",
+  "value_backend": "normalized"
+}

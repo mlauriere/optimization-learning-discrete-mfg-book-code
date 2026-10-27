@@ -1,0 +1,17 @@
+{
+  "seed": 7,
+  "horizon": 17,
+  "time_step_length": 0.25,
+  "capacity": 4.0,
+  "snapshot_population": 4,
+  "snapshot_iterations": 5,
+  "omd_lr": 1.0,
+  "populations": [
+    2,
+    3,
+    4
+  ],
+  "timing_iterations": 2,
+  "repetitions": 2,
+  "traffic_mode": "fixed_horizon_v1"
+}

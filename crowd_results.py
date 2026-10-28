@@ -1,13 +1,14 @@
 """Save and load crowd plot data without constructing an OpenSpiel game."""
 
 from pathlib import Path
+import json
 import re
 
 from common import check_mass, np, read_config, write_json
 from crowd_methods import METHOD_SETTINGS
 
 
-def save_case(directory, curves, flows, layout, parameters, method_settings, policy_tables=None):
+def save_case(directory, curves, flows, layout, parameters, method_settings, policy_tables=None, experiment=None):
     """Save completed methods, explicit axes, and a self-contained plot schema.
 
     This is a plot-data snapshot, not a solver checkpoint. Temporary files avoid
@@ -24,9 +25,6 @@ def save_case(directory, curves, flows, layout, parameters, method_settings, pol
             states, probabilities = policy_tables[method]
             arrays[f"policy_states_{method}"] = np.asarray(states)
             arrays[f"policy_probabilities_{method}"] = np.asarray(probabilities)
-    temporary = directory / "results.pending.npz"
-    np.savez_compressed(temporary, **arrays)
-    temporary.replace(directory / "results.npz")
     metadata = {
         "schema_version": 1, "kind": "crowd", "layout": layout,
         "parameters": parameters, "method_order": list(curves),
@@ -36,12 +34,18 @@ def save_case(directory, curves, flows, layout, parameters, method_settings, pol
         "exploitability": "Raw unnormalized OpenSpiel NashConv",
         "final_update": {method: len(values) - 1 for method, values in curves.items()},
     }
+    if experiment is not None:
+        metadata["experiment"] = experiment
     if policy_tables:
         metadata["policy_table"] = {
             "state_keys": "OpenSpiel policy keys: representative information-state histories for native states, observation strings for the wrapper; cost nodes occur only in the wrapper",
             "columns": "Integer action IDs starting at zero; zero on illegal actions",
             "kind": "Final returned policies, not resumable solver checkpoints",
         }
+    arrays["metadata_json"] = np.asarray(json.dumps(metadata, allow_nan=False))
+    temporary = directory / "results.pending.npz"
+    np.savez_compressed(temporary, **arrays)
+    temporary.replace(directory / "results.npz")
     temporary_metadata = directory / "case_metadata.pending.json"
     write_json(temporary_metadata, metadata)
     temporary_metadata.replace(directory / "case_metadata.json")
@@ -75,6 +79,11 @@ def load_case(directory):
         if metadata.get("schema_version") != 1 or metadata.get("kind") != "crowd":
             raise ValueError("Unsupported crowd result schema")
         metadata_files = [metadata_path]
+    elif "metadata_json" in arrays:
+        metadata = json.loads(str(arrays["metadata_json"]))
+        if metadata.get("schema_version") != 1 or metadata.get("kind") != "crowd":
+            raise ValueError("Unsupported embedded crowd result schema")
+        metadata_files = []
     else:
         params_path = directory / "game_parameters.json"
         parameters = read_config(params_path)

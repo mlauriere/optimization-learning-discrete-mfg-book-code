@@ -1,10 +1,12 @@
 """Compare tabular MFG algorithms on configurable OpenSpiel crowd layouts."""
 
 import argparse
+import hashlib
 from contextlib import nullcontext
 from functools import partial
 import random
 import re
+import shutil
 import time
 
 from common import ROOT, Run, check_mass, np, read_config, write_csv, write_json
@@ -101,8 +103,35 @@ def main():
     parser.add_argument("--reward-mode", choices=("native", "markov_action_cost_v1"))
     parser.add_argument("--value-backend", choices=("normalized", "wrapper"))
     parser.add_argument("--output-root")
+    parser.add_argument("--save-checkpoints", action=argparse.BooleanOptionalAction, default=None)
+    parser.add_argument("--checkpoint-interval", type=int)
+    parser.add_argument("--resume", help="Resume one method/case from a saved solver checkpoint")
     args = parser.parse_args()
-    config = read_config(args.config)
+    checkpoint = None
+    if args.resume:
+        from crowd_checkpoints import read_checkpoint
+        checkpoint = read_checkpoint(args.resume)
+        for filename in ("crowd.py", "crowd_methods.py", "crowd_checkpoints.py",
+                         "crowd_value_correction.py", "crowd_markov.py", "crowd_coordinates.py"):
+            recorded = checkpoint[0]["provenance"]["source_sha256"].get(filename)
+            if hashlib.sha256((ROOT / filename).read_bytes()).hexdigest() != recorded:
+                parser.error(f"Checkpoint implementation differs: {filename}; use its saved source snapshot")
+        config = checkpoint[0]["config"].copy()
+        if any(getattr(args, name) is not None for name in
+               ("horizon", "noise", "congestion", "methods", "reward_mode", "value_backend")):
+            parser.error("A resumed run retains the checkpoint's model and hyperparameters")
+        config["methods"] = [checkpoint[0]["method"]]
+        config["noise_levels"] = [checkpoint[0]["parameters"]["noise_intensity"]]
+        config["congestion_coefficients"] = [checkpoint[0]["parameters"]["crowd_aversion_coef"]]
+        config["resumed_from"] = str(args.resume)
+    else:
+        config = read_config(args.config)
+    config["save_checkpoints"] = (args.save_checkpoints if args.save_checkpoints is not None
+                                  else config.get("save_checkpoints", False))
+    config["checkpoint_interval"] = (args.checkpoint_interval if args.checkpoint_interval is not None
+                                     else config.get("checkpoint_interval", 25))
+    if config["checkpoint_interval"] < 1:
+        parser.error("checkpoint_interval must be positive")
     config["reward_mode"] = args.reward_mode or config.get("reward_mode", "native")
     config["value_backend"] = args.value_backend or config.get("value_backend", "normalized")
     if config["reward_mode"] not in ("native", "markov_action_cost_v1"):
@@ -113,6 +142,8 @@ def main():
     if corrected and config["value_backend"] == "native":
         parser.error("A corrected reward mode requires normalized or wrapper values")
     normalized = corrected and config["value_backend"] == "normalized"
+    if (config["save_checkpoints"] or checkpoint) and not normalized:
+        parser.error("Solver checkpoints currently support corrected normalized crowd runs")
     if not corrected:
         config["value_backend"] = "native"
     layout = layout_from_config(config)
@@ -125,6 +156,8 @@ def main():
         config["congestion_coefficients"] = args.congestion
     if config["horizon"] < 2 or config["iterations"] < 1 or not config["methods"]:
         parser.error("Use horizon >= 2, iterations >= 1 and at least one method")
+    if checkpoint and config["iterations"] < checkpoint[0]["update"]:
+        parser.error("Requested total iterations precede the checkpoint")
     if any(not 0 <= p <= 1 for p in config["noise_levels"]):
         parser.error("Noise must lie in [0,1]")
     if any(c < 0 for c in config["congestion_coefficients"]):
@@ -154,6 +187,17 @@ def main():
     np.random.seed(config["seed"])
     name = f"crowd_{layout['name']}" + ("_markov" if config["reward_mode"] != "native" else "")
     with value_context, Run(name, config, args.output_root) as run:
+        sources = run.path / "sources"
+        sources.mkdir()
+        for path in sorted(ROOT.glob("*.py")):
+            shutil.copy2(path, sources / path.name)
+        for filename, checksum in run.manifest["source_sha256"].items():
+            if hashlib.sha256((sources / filename).read_bytes()).hexdigest() != checksum:
+                raise ValueError("Source changed while creating the run snapshot")
+        provenance = {key: run.manifest[key] for key in
+                      ("python", "machine", "packages", "source_sha256", "thread_limits")}
+        experiment = {"config": config, "provenance": provenance,
+                      "source_snapshot": "../sources", "seed": config["seed"]}
         run.manifest["data_schema"] = "crowd-v1"
         run.manifest["reward_mode"] = config["reward_mode"]
         run.manifest["value_backend"] = config["value_backend"]
@@ -183,8 +227,20 @@ def main():
                     algo = factories[method](game)
                     setup_seconds = time.perf_counter() - started
                     values = []
+                    start_update = 0
+                    prefix_elapsed = 0.0
+                    if checkpoint:
+                        from crowd_checkpoints import restore_checkpoint
+                        values = restore_checkpoint(algo, game, *checkpoint, settings[method], saved_parameters)
+                        start_update = checkpoint[0]["update"]
+                        if checkpoint[0].get("history") is None:
+                            raise ValueError("CLI resume requires the checkpoint's recorded metric history")
+                        rows.extend(checkpoint[0]["history"])
+                        prefix_elapsed = float(rows[-1]["elapsed_method_seconds"])
+                        write_csv(directory / "exploitability.csv", rows)
+                        run.log("resume", f"{case} method={method} update={start_update}")
                     update_total, evaluation_total = 0.0, 0.0
-                    for update in range(config["iterations"] + 1):
+                    for update in range(start_update + (1 if checkpoint else 0), config["iterations"] + 1):
                         # Update zero is the common initialization, not a solver step.
                         update_started = time.perf_counter()
                         if update:
@@ -203,9 +259,15 @@ def main():
                                      "exploitability": exploit,
                                      "solver_update_seconds": update_seconds,
                                      "evaluation_seconds": evaluation_seconds,
-                                     "elapsed_method_seconds": time.perf_counter() - started})
+                                     "elapsed_method_seconds": prefix_elapsed + time.perf_counter() - started})
                         write_csv(directory / "exploitability.csv", rows)
                         run.log("crowd", f"{case} method={method} update={update} exploitability={exploit:.9g}")
+                        if config["save_checkpoints"] and (update % config["checkpoint_interval"] == 0
+                                                            or update == config["iterations"]):
+                            from crowd_checkpoints import save_checkpoint
+                            save_checkpoint(directory / "checkpoints" / method / f"update_{update:06d}.npz",
+                                            algo, method, update, values, config, saved_parameters, provenance,
+                                            [row for row in rows if row["method"] == method])
                     flow_started = time.perf_counter()
                     flow = decode_flow(game, algo.get_policy())
                     error = check_mass(flow, axis=(1, 2))
@@ -228,7 +290,7 @@ def main():
                                     "seconds": time.perf_counter() - started})
                     save_started = time.perf_counter()
                     save_case(directory, curves, flows, layout, saved_parameters, settings,
-                              policy_tables=policy_tables)
+                              policy_tables=policy_tables, experiment=experiment)
                     metrics[-1]["save_seconds"] = time.perf_counter() - save_started
                     metrics[-1]["seconds"] = time.perf_counter() - started
                     write_json(run.path / "metrics.json", metrics)

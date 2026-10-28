@@ -19,7 +19,7 @@
     10
   ],
   "seed": 7,
-  "iterations": 50,
+  "iterations": 1000,
   "horizon": 11,
   "noise_levels": [
     0.0,
@@ -61,5 +61,7 @@
     }
   },
   "reward_mode": "markov_action_cost_v1",
-  "value_backend": "normalized"
+  "value_backend": "normalized",
+  "save_checkpoints": false,
+  "checkpoint_interval": 25
 }

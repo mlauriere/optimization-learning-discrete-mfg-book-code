@@ -69,7 +69,7 @@ not silently renormalized. Probability checks allow the corresponding rounding.
 ## Learning Methods and Saved Policies
 
 All methods start uniformly on legal actions, recorded at update zero. The
-concert room has 100 updates; the maze has 50. Eight curves cover seven families:
+concert room and maze both have 1000 updates. Eight curves cover seven families:
 
 | Method | Update / parameter |
 |---|---|
@@ -95,7 +95,31 @@ Tabular computations sum over transition probabilities rather than drawing
 population sample paths. High exploitability values/oscillation are not Monte
 Carlo noise. Saved action-probability tables use representative native
 information-state histories; the verifier maps them to physical observations
-for independent replay. They are not resumable learning checkpoints.
+for independent replay. These final-policy plotting tables are not resumable
+learning checkpoints.
+
+## Optional Restart States and Provenance
+
+`crowd_checkpoints.py` saves additional solver state only when requested. It
+preserves the current policy, FP's correlating policy/counter, evaluated and
+cumulative value tables, normalization weights/counters, random-generator states
+and complete recorded history. Checkpoints use NPZ with JSON metadata and
+`allow_pickle=False`. The CLI checks core source hashes and OpenSpiel/NumPy
+versions and rejects changed model/hyperparameter settings. These are
+compatibility checks, not a promise of portability between implementations.
+Only corrected normalized crowd runs are supported. Existing archives without
+solver state cannot be turned retroactively into resumable checkpoints.
+
+The bundled histories contain every update from 0 to 1000. They were continued
+from saved states, including the final extension from 800 to 1000, not
+restarted at those intermediate budgets. Their models, horizons, parameters
+and initialization are unchanged. Numerical-run fingerprints identify the
+computation before public packaging; private run paths and campaign-controller
+metadata have been removed from both JSON sidecars and embedded NPZ metadata.
+The scientific arrays, final policies and flows are unchanged by that export.
+Actual large restart archives are not bundled. New local runs embed their full
+plot metadata and save source snapshots/environment records in ignored output
+directories; do not publish those local records without reviewing them.
 
 ## Aligned Traffic Model
 
@@ -165,9 +189,18 @@ Distribution columns are physical-time slices under each final policy, not
 learning iterates. Heatmaps labelled "Population density" show probability mass
 per grid cell, with one common scale per grid across selected methods and all
 saved times, including initialization. No panel is renormalized or clipped.
+The three paired crowd/maze exploitability figures use shared y limits within
+each noise pair and the same update indices for every curve: 0--20, followed
+by 25,30,...,1000. There are 217 displayed values per curve, no smoothing and
+no markers; all 1001 raw values remain saved. The odd stride retains both
+phases of a strict two-cycle, but subsampling need not resolve arbitrary
+higher-frequency variation. Three-column legends read labels/parameters from
+metadata. The four population figures use update-1000 policies. Together with
+the unchanged two traffic figures these form the nine-figure manuscript set.
 Logarithmic curves alone display max(value,1e-12); saved values are untouched.
 Traffic circle radius, not area, is proportional to link probability.
 
-Native heatmap cells and uncompressed PDF streams avoid a low-bit-depth export
-problem in the pinned Matplotlib backend. Fonts and labels should still be
+Publication crowd heatmaps use vector quadrilaterals. General-purpose heatmap
+exports retain native cells and uncompressed PDF streams to avoid a
+low-bit-depth export problem in the pinned Matplotlib backend. Fonts and labels should still be
 reviewed at the manuscript's final printed size.

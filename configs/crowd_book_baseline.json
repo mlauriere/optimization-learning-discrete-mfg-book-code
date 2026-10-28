@@ -1,6 +1,6 @@
 {
   "seed": 7,
-  "iterations": 100,
+  "iterations": 1000,
   "horizon": 21,
   "layout": "concert_room",
   "grid": [
@@ -75,5 +75,7 @@
     "bpi"
   ],
   "reward_mode": "markov_action_cost_v1",
-  "value_backend": "normalized"
+  "value_backend": "normalized",
+  "save_checkpoints": false,
+  "checkpoint_interval": 25
 }

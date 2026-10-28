@@ -1,6 +1,6 @@
 {
   "seed": 7,
-  "iterations": 100,
+  "iterations": 1000,
   "horizon": 21,
   "layout": "concert_room",
   "grid": [
@@ -146,5 +146,7 @@
       "row_label": "BPI ($\\beta=0.1$)",
       "implementation": "crowd_value_correction.NormalizedBoltzmannPolicyIteration"
     }
-  }
+  },
+  "save_checkpoints": true,
+  "checkpoint_interval": 25
 }

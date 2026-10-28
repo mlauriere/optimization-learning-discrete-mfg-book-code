@@ -128,14 +128,210 @@
   "flow_interpretation": "Induced flow of the final returned policy",
   "exploitability": "Raw unnormalized OpenSpiel NashConv",
   "final_update": {
-    "fp": 50,
-    "omd_0p1": 50,
-    "omd_0p01": 50,
-    "fixed_point": 50,
-    "damped_fp": 50,
-    "softmax_fixed_point": 50,
-    "softmax_fp": 50,
-    "bpi": 50
+    "fp": 1000,
+    "omd_0p1": 1000,
+    "omd_0p01": 1000,
+    "fixed_point": 1000,
+    "damped_fp": 1000,
+    "softmax_fixed_point": 1000,
+    "softmax_fp": 1000,
+    "bpi": 1000
+  },
+  "experiment": {
+    "config": {
+      "seed": 7,
+      "iterations": 1000,
+      "horizon": 11,
+      "layout": "asymmetric_maze",
+      "grid": [
+        "#######",
+        "#o    #",
+        "# ### #",
+        "# #   #",
+        "#   # #",
+        "#     #",
+        "#######"
+      ],
+      "targets": [
+        [
+          5,
+          5
+        ]
+      ],
+      "target_weights": [
+        10
+      ],
+      "method_parameters": {
+        "fp": {},
+        "omd_0p1": {
+          "lr": 0.1
+        },
+        "omd_0p01": {
+          "lr": 0.01
+        },
+        "fixed_point": {},
+        "damped_fp": {
+          "lr": 0.01
+        },
+        "softmax_fixed_point": {
+          "temperature": 0.1
+        },
+        "softmax_fp": {
+          "temperature": 0.1
+        },
+        "bpi": {
+          "lr": 0.1
+        }
+      },
+      "noise_levels": [
+        0.5
+      ],
+      "congestion_coefficients": [
+        1.0
+      ],
+      "methods": [
+        "fp",
+        "omd_0p1",
+        "omd_0p01",
+        "fixed_point",
+        "damped_fp",
+        "softmax_fixed_point",
+        "softmax_fp",
+        "bpi"
+      ],
+      "reward_mode": "markov_action_cost_v1",
+      "value_backend": "normalized",
+      "method_settings": {
+        "fp": {
+          "class": "fictitious_play",
+          "parameters": {},
+          "label": "Fictitious play",
+          "row_label": "Fictitious play",
+          "averaging_weight": "1/(k+1), update k>=1",
+          "implementation": "open_spiel.python.mfg.algorithms.fictitious_play.FictitiousPlay"
+        },
+        "omd_0p1": {
+          "class": "mirror_descent",
+          "parameters": {
+            "lr": 0.1
+          },
+          "label": "OMD ($\\eta=0.1$)",
+          "row_label": "OMD ($\\eta=0.1$)",
+          "implementation": "crowd_value_correction.NormalizedMirrorDescent"
+        },
+        "omd_0p01": {
+          "class": "mirror_descent",
+          "parameters": {
+            "lr": 0.01
+          },
+          "label": "OMD ($\\eta=0.01$)",
+          "row_label": "OMD ($\\eta=0.01$)",
+          "implementation": "crowd_value_correction.NormalizedMirrorDescent"
+        },
+        "fixed_point": {
+          "class": "fixed_point",
+          "parameters": {},
+          "label": "Fixed point",
+          "row_label": "Fixed point",
+          "implementation": "open_spiel.python.mfg.algorithms.fixed_point.FixedPoint"
+        },
+        "damped_fp": {
+          "class": "fictitious_play",
+          "parameters": {
+            "lr": 0.01
+          },
+          "label": "Damped fixed point ($\\alpha=0.01$)",
+          "row_label": "Damped fixed point",
+          "averaging_weight": 0.01,
+          "implementation": "open_spiel.python.mfg.algorithms.fictitious_play.FictitiousPlay"
+        },
+        "softmax_fixed_point": {
+          "class": "fixed_point",
+          "parameters": {
+            "temperature": 0.1
+          },
+          "label": "Softmax fixed point ($\\tau=0.1$)",
+          "row_label": "Softmax fixed point",
+          "implementation": "open_spiel.python.mfg.algorithms.fixed_point.FixedPoint"
+        },
+        "softmax_fp": {
+          "class": "fictitious_play",
+          "parameters": {
+            "temperature": 0.1
+          },
+          "label": "Softmax fictitious play ($\\tau=0.1$)",
+          "row_label": "Softmax fictitious play",
+          "averaging_weight": "1/(k+1), update k>=1",
+          "implementation": "open_spiel.python.mfg.algorithms.fictitious_play.FictitiousPlay"
+        },
+        "bpi": {
+          "class": "boltzmann_policy_iteration",
+          "parameters": {
+            "lr": 0.1
+          },
+          "label": "BPI ($\\beta=0.1$)",
+          "row_label": "BPI ($\\beta=0.1$)",
+          "implementation": "crowd_value_correction.NormalizedBoltzmannPolicyIteration"
+        }
+      },
+      "save_checkpoints": true,
+      "checkpoint_interval": 25
+    },
+    "seed": 7,
+    "provenance": {
+      "python": "3.10.22 | packaged by conda-forge | (main, Oct  6 2026, 22:55:54) [Clang 19.1.7 ]",
+      "machine": "arm64",
+      "packages": {
+        "open-spiel": "1.5",
+        "numpy": "1.26.4",
+        "scipy": "1.11.4",
+        "matplotlib": "3.7.1",
+        "pandas": "2.2.3",
+        "seaborn": "0.13.2"
+      },
+      "thread_limits": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      }
+    },
+    "numerical_run_source_sha256": {
+      "audit_crowd_results.py": "e1e9285a4ef24c461440656a3e565307692d2956d05d985f452c4bd2ed83e264",
+      "common.py": "52612174b04ddc2e1a571882cb98136c467a4adbc106a87bb269dc638c15d406",
+      "crowd.py": "721c3d20e29f3bb7f7da6824f57d770f06f8d0b547a975560e71920cd6bb8ac3",
+      "crowd_checkpoints.py": "0154e2302267c66056a16c95576ba2a242220f7ad320e1cccdca854ddc53c128",
+      "crowd_coordinates.py": "baffeaedc9da72089867e476d21c07189e3b34b912e8c384ab97036e94ac4001",
+      "crowd_markov.py": "ace613bf9efe8626a00e61498822f612114e173eb6c2dc53df681997bb42b6e4",
+      "crowd_methods.py": "4d37b1f6fa88187797e7139f381172c64352e2136f29796c0993074751ab0fa4",
+      "crowd_policy_audit.py": "ec696e506848519b58e9ffd9a76083e38498ae0fa6257adeb8406346f4fa3618",
+      "crowd_results.py": "100cab7e7a0fff91cac0bf7c66d1d924fbbd5c5e49745c53eb7298f3bce0b455",
+      "crowd_value_correction.py": "dcf17231bf48bd0ca96327dd6ba2eeb40d1c23fdaf564c3f60a3c5a58860b0d7",
+      "plot_crowd.py": "a0891070590bf9170fb576264fe9cd420b5bf7a9bd3319e37c82893da67ab0db",
+      "plot_traffic.py": "473d395ad074e0db889952a8b743f5e2c95a5c69fa80e0d42d7964932edc32ae",
+      "plot_traffic_timing.py": "cd7a662d68658b3f18fb2926f01ae99db50fcf3fc742156393eb4f85032e9586",
+      "plotting.py": "dc6f656217121ee73c613e68c4058e9be08b7c5d8bb6091b493d4739507e3632",
+      "publication_figures.py": "e4bd3d7d87632a74b1b30d9f73e05a9b83e09c1ca4ed1211ee998dd2d4db9512",
+      "summarize_traffic_timing.py": "8c2891bb01d2732c06d84c69c575fd4b8f48d2cc90bec934b3c08b0fd9022adf",
+      "traffic.py": "e85539e05ec20842de6abc39a2777004ad8fadfef3d6bfa71f974a96087cb731",
+      "traffic_aligned.py": "1d5d3bf4ca1e3cdcd2d3b5bca4cb51f80888820b2514e1779bbfdbd35ef2fbe4",
+      "traffic_benchmark.py": "b02ea81f17cb8e7d2b48fb1938ee2f5719d2f7aa5d5d8a60fb8616e1fb0b4806",
+      "traffic_timing_uncertainty.py": "25d55daa94451002710728c8364a40e552b0e1e07db52e29fbcc5c3145872fc7",
+      "verify_corrected_crowd.py": "1ce34add88fa50480d2bd855ea4c485599811c833e76bb79824a34d7f51530c0",
+      "verify_reference_data.py": "59a180566815db04c655f5b04afc5b923ef0c35eb09f970c1967ad7ad7bbc404"
+    },
+    "source_hash_scope": "Numerical computation before public packaging; not checkpoint-restore fingerprints",
+    "continuation": {
+      "final_update": 1000,
+      "continued_from_solver_checkpoints": true,
+      "last_extension": {
+        "from_update": 800,
+        "to_update": 1000
+      },
+      "checkpoint_interval": 25,
+      "checkpoint_archives_bundled": false
+    }
   },
   "policy_table": {
     "state_keys": "OpenSpiel policy keys: representative information-state histories for native states, observation strings for the wrapper; cost nodes occur only in the wrapper",

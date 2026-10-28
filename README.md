@@ -36,7 +36,7 @@ python publication_figures.py --output figures/book
 ```
 
 The output directory must be new. These commands check the data and produce
-eleven selected PNG/PDF figure pairs with a figure ledger. They do not import
+nine selected PNG/PDF figure pairs with a figure ledger. They do not import
 OpenSpiel or run learning. The ledger identifies the case, algorithm budget,
 display choices and timing repetition count. Other saved methods/times can be
 displayed using the individual plotters:
@@ -47,8 +47,15 @@ python plot_traffic.py reference_data/traffic_population --output figures/traffi
 python plot_traffic_timing.py reference_data/traffic_timing --output figures/timing-detail
 ```
 
+The manuscript set contains three paired crowd/maze exploitability figures,
+four population figures and two traffic figures. Crowd/maze curves display
+updates 0--20 and then 25,30,...,1000: the same 217 indices for all 48 curves,
+with no smoothing or markers and three-column legends. The full histories
+remain available; subsampling changes only the display. Population panels use
+the policies returned at update 1000.
+
 All four concert-room cases and both maze cases include eight learning curves,
-final-policy flows and final action-probability tables: 4,048 curve values in
+final-policy flows and final action-probability tables: 48,048 curve values in
 total. Traffic includes the four-vehicle population illustration and 60 loop
 timings/1,200 update timings from three repetitions at each population. The
 data contain configurations, geometry, coordinates, seeds and portable
@@ -79,8 +86,8 @@ python traffic.py --config configs/traffic_aligned_three_repetitions.json --snap
 python traffic_benchmark.py --config configs/traffic_aligned_three_repetitions.json --repetitions 3 --timeout 450
 ```
 
-The concert room uses H=21, 100 updates, coefficients 1/10 and noise 0/0.5.
-The maze uses H=11, 50 updates, coefficient 1 and both noise levels. Eight
+The concert room uses H=21, 1000 updates, coefficients 1/10 and noise 0/0.5.
+The maze uses H=11, 1000 updates, coefficient 1 and both noise levels. Eight
 configurations cover seven algorithm families, including two OMD step sizes.
 The traffic population illustration uses N=4 and ten OMD updates. Traffic
 timings use H=17, 20 updates per solver and three repetitions for
@@ -103,6 +110,36 @@ python verify_corrected_crowd.py outputs/<crowd-run> --output outputs/policy-rec
 
 Bundled individual-case NPZ files also retain their policy tables; see
 `MODEL_NOTES.md` for their interpretation.
+
+## Optional Checkpoints and Resume
+
+Checkpoint saving is off by default. To save restart states during a run:
+
+```bash
+python crowd.py --config configs/crowd_maze_smoke.json --iterations 5 --save-checkpoints --checkpoint-interval 1
+```
+
+Each method/case writes pickle-free NPZ files under its output directory's
+`checkpoints/METHOD/` subdirectory. Resume one saved method/case into a new run:
+
+```bash
+python crowd.py --resume outputs/<run>/<case>/checkpoints/<method>/update_000005.npz --iterations 10 --save-checkpoints
+```
+
+`--iterations` is the desired total, not the number of additional updates.
+The model and hyperparameters are retained; incompatible versions, core source
+hashes and requested model changes are rejected. Use the recorded environment
+and saved `sources/` files to resume an older implementation. This currently
+supports only the corrected normalized crowd backend. `--no-save-checkpoints`
+disables further saves; the default interval is 25, with initial/final saves.
+Fine checkpoint intervals can consume substantial space on longer runs.
+
+The bundled 1000-update histories were extended from saved solver states,
+retaining all earlier values. Large restart archives are not distributed.
+Bundled final-policy tables permit evaluation and replotting, not continuation
+of the optimizer; create checkpoints during your own runs to enable resume.
+New runs also embed their plot metadata in `results.npz` and save source and
+environment records separately.
 
 ## Interpretation and Repeatability
 
